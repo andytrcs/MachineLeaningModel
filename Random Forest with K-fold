@@ -1,0 +1,65 @@
+title: "Random Forest with 10 fold cross validation"
+author: "Andy Tran"
+date: "October 14, 2020"
+
+
+
+
+
+
+import numpy as np
+import pandas as pd 
+
+dataset = pd.read_csv("rao_hela_10kb.tads.boundary.4mer.features.csv")
+
+
+
+ 
+# Load dataset
+
+from sklearn.preprocessing import LabelEncoder
+ 
+X = dataset.iloc[:, 1:-1].values
+y = dataset.iloc[:, -1].values
+le = LabelEncoder()
+y = le.fit_transform(y)
+le.transform([0,1])
+
+
+
+# set dataset into 80% training and 20% testing
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test= train_test_split(X, y, test_size = 0.2, random_state= 1)
+
+
+#set sclale to 0
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+pipe_lr = Pipeline([('scl', StandardScaler(0)),
+     ('pca', PCA(n_components=2)),
+     ('clf', LogisticRegression(random_state=1))])
+pipe_lr.fit(X_train, y_train)
+
+# build random forest
+from sklearn.ensemble import RandomForestClassifier
+classifier = RandomForestClassifier(n_estimators=50,random_state=1)
+classifier.fit(X_train, y_train)
+y_pred = classifier.predict(X_test)
+
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+print(classification_report(y_test, y_pred))
+print(confusion_matrix(y_test, y_pred))
+print(accuracy_score(y_test, y_pred))
+
+# 10 fold cross validation 
+from sklearn.model_selection import cross_val_score
+train_score = cross_val_score(classifier, X_train, y_train, scoring = 'accuracy', cv=10)
+test_score = cross_val_score(classifier, X_test, y_test, scoring = 'accuracy', cv=10)
+
+print(train_score)
+print(test_score)
+
+
+
