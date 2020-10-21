@@ -1,4 +1,4 @@
-title: "Random Forest with 10 fold cross validation"
+title: "Random Forest with 10 fold cross validation, CVGrid Search"
 author: "Andy Tran"
 date: "October 21, 2020"
 
