@@ -1,0 +1,70 @@
+title: "Logistic Regression"
+author: "Andy Tran"
+date: "October 29, 2020"
+
+
+
+
+import numpy as np
+import pandas as pd 
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import cross_val_score
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+
+
+
+
+dataset = pd.read_csv("rao_huvec_10kb.tads.boundary.4mer.features.csv")
+
+
+
+ 
+# Load dataset
+
+
+ 
+X = dataset.iloc[:, 1:-1].values
+y = dataset.iloc[:, -1].values
+le = LabelEncoder()
+y = le.fit_transform(y)
+le.transform([0,1])
+
+# split data into 20% test and 80% training 
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2)
+
+# Build Logistic regression model, CVgrid Search, L2
+Model = LogisticRegression()
+param_grid = [    
+    {'penalty' : ['l2'],
+    'C' : ( 0.0001, 0.001, 0.01, 0.1, 1.0),
+    'solver' : ['lbfgs','newton-cg','liblinear','sag','saga'],
+    'max_iter' : [25,50]
+    } ]
+
+clf = GridSearchCV(Model, param_grid = param_grid, cv = 10, verbose=True, n_jobs=-1)
+
+best_clf = clf.fit(X,y)
+best_clf.best_estimator_
+
+Model.fit(X_train, y_train)
+y_pred = Model.predict(X_test)
+
+# Add AUC score 
+clf_labels = ['Logistic Regression']
+for clf, label in zip([Model], clf_labels):
+    scores = cross_val_score(estimator=Model, X=X_train, y=y_train, cv=10, scoring='roc_auc')
+print("---------------------------------------------------------------")    
+print (f'Accuracy From CV grid Search - : {best_clf.score(X,y):.3f}')
+print("---------------------------------------------------------------")
+print("ROC AUC: %0.2f (+/- %0.2f) [%s]" % (scores.mean(), scores.std(), label))
+print("---------------------------------------------------------------")
+print( "Report: \n" ,classification_report(y_test, y_pred))
+print ("Matrix: \n", confusion_matrix(y_test, y_pred))
+print("Accuaracy: " , accuracy_score(y_test, y_pred))
+print("---------------------------------------------------------------")
+
+
