@@ -67,4 +67,17 @@ print ("Matrix: \n", confusion_matrix(y_test, y_pred))
 print("Accuaracy: " , accuracy_score(y_test, y_pred))
 print("---------------------------------------------------------------")
 
+# save the model to disk
+import pickle 
+filename = 'Logistic Regression.pickle'
+pickle.dump(Model, open(filename, 'wb'))
+ 
+ 
+
+# load the model from disk
+loaded_model = pickle.load(open(filename, 'rb'))
+result = loaded_model.score(X_test, y_test)
+print("Test Score: " ,result)
+
+
 
