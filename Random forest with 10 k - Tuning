@@ -82,7 +82,7 @@ print("Best Value: ", best_result)
 
 # save the model to disk
 import pickle 
-filename = 'Randomforest.pickle'
+filename = 'RandomFR-Tuning.pickle'
 pickle.dump(classifier, open(filename, 'wb'))
  
  
