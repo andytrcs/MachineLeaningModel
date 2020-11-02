@@ -80,4 +80,16 @@ print(best_parameters)
 best_result = gd_sr.best_score_
 print("Best Value: ", best_result)
 
+# save the model to disk
+import pickle 
+filename = 'Randomforest.pickle'
+pickle.dump(classifier, open(filename, 'wb'))
+ 
+ 
+
+# load the model from disk
+loaded_model = pickle.load(open(filename, 'rb'))
+result = loaded_model.score(X_test, y_test)
+print("Test Score: " ,result)
+
 
