@@ -63,7 +63,7 @@ print(test_score)
 
 # save the model to disk
 import pickle 
-filename = 'SVM.pickle'
+filename = 'RandomFR-Tunning.pickle'
 pickle.dump(classifier, open(filename, 'wb'))
  
  
