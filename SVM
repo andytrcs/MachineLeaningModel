@@ -1,0 +1,56 @@
+Title: " Non-linear Support Vector Machine (Kernel = rbf)
+Author: "Andy Tran"
+Date: "11-02-2020 
+
+
+from sklearn import svm
+import numpy as np
+import pandas as pd 
+
+dataset = pd.read_csv("rao_huvec_10kb.tads.boundary.4mer.features.csv")
+
+ 
+# Load dataset
+
+from sklearn.preprocessing import LabelEncoder
+ 
+X = dataset.iloc[:, 1:-1].values
+y = dataset.iloc[:, -1].values
+le = LabelEncoder()
+y = le.fit_transform(y)
+le.transform([0,1])
+
+
+# set dataset into 80% training and 20% testing
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test= train_test_split(X, y, test_size = 0.2, random_state= 1)
+
+
+#build SVM model, non-linear, kernel = rbf
+
+nonlinear_clf = svm.SVC(kernel='rbf', C=1.0)
+nonlinear_clf.fit(X_train, y_train)
+
+
+y_pred = nonlinear_clf.predict(X_test)
+from sklearn.metrics import classification_report, confusion_matrix
+print(confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))
+
+print("Test Score: ",nonlinear_clf.score(X_test, y_test))
+
+
+print("-------------------------------------------")
+
+# save the model to disk
+import pickle 
+filename = 'SVM.pickle'
+pickle.dump(nonlinear_clf, open(filename, 'wb'))
+ 
+ 
+
+# load the model from disk
+loaded_model = pickle.load(open(filename, 'rb'))
+result = loaded_model.score(X_test, y_test)
+print("Test Score: " ,result)
